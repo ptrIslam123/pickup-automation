@@ -1,0 +1,8 @@
+venv/
+.venv/
+.vscode/
+.idea/
+*__pycache__/
+.local/
+log/
+qodana.yaml

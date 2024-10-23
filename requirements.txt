@@ -1,0 +1,4 @@
+playwright
+BeautifulSoup4
+fuzzywuzzy
+requests
