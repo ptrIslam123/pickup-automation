@@ -1,9 +1,10 @@
 import os
+import time
 import Levenshtein
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import Playwright
-from global_config import BROWSER_CONTEXT_PATH
+from global_config import BROWSER_CONTEXT_PATH, ROOT_PATH
 from ai import ask
 
 class LeoBot:
@@ -12,12 +13,42 @@ class LeoBot:
         self.__browser = None
         self.__context = None
         self.__page = None
+        
+    def __sigin(self):
+        browser = self.__playwright.chromium.launch(headless=False)
+        context = browser.new_context()
+        page = context.new_page()
+        page.goto("https://web.telegram.org/k/")
+        
+        print("Ожидание загрузки Telegram Web...")
+        
+        while True:
+            try:
+                time.sleep(1)
+                page.get_by_placeholder(" ").click()
+                page.get_by_placeholder(" ").fill("@leomatchbot")
+                page.wait_for_selector("text=leomatchbot", timeout=5000)
+                break
+            except Exception as _:
+                print("Не загрузился еще!")
+                continue
+        
+        print("Интерфейс загружен, проверяем через поиск бота...")
+
+        local_dir = f"{ROOT_PATH}/.local/"
+        if not os.path.exists(local_dir):
+            os.makedirs(local_dir)
+        context.storage_state(path=BROWSER_CONTEXT_PATH)
+        # ---------------------
+        context.close()
+        browser.close()
+
     
     def login(self, playwright: Playwright):
         self.__playwright = playwright
         
         if not os.path.exists(BROWSER_CONTEXT_PATH):
-            pass
+            self.__sigin()
         
         self.__browser = self.__playwright.chromium.launch(headless=False)
         self.__context = self.__browser.new_context(storage_state=BROWSER_CONTEXT_PATH)
@@ -128,8 +159,23 @@ class LeoBot:
         1. Показать.
         2. Не хочу больше никого смотреть.
         """
-        example = "1. Смотреть анкеты.\n2. Заполнить анкету заново.\n3. Изменить фото/видео.\n4. Изменить текст анкеты."
-        return self.__levenshtein_cmp(example, text, 0.6)
+        examples = [
+            """
+            1. Смотреть анкеты.
+            2. Заполнить анкету заново.
+            3. Изменить фото/видео.
+            4. Изменить текст анкеты.
+            """,
+            """
+            Несколько девушек из  хотят познакомиться с тобой прямо сейчас
+            1. Посмотреть.
+            2. Не интересно.
+            """
+        ]
+        for example in examples:
+            if self.__levenshtein_cmp(example, text, 0.6):
+                return True
+        return False
     
     def is_stop(self, text: str):
         """

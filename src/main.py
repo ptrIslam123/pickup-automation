@@ -12,36 +12,8 @@ from leo_bot import LeoBot
 from ai import ask
 from global_config import *
 
-def login(playwright: Playwright) -> None:
-    browser = playwright.chromium.launch(headless=False)
-    context = browser.new_context()
-    page = context.new_page()
-    page.goto("https://web.telegram.org/k/")
-    # page.get_by_role("button", name="Log in by phone Number").click()
-    #
-    # while True:
-    #     phone_input = page.locator('div.input-field-input[contenteditable="true"]')
-    #     if phone_input:
-    #         phone_input.nth(0) .fill(phone_nummer)
-    #         break
-    #     else:
-    #         continue
-    #
-    # #page.locator("div").filter(has_text=re.compile(r"^Phone Number$")).locator("div").first.fill(phone_nummer)
-    # page.get_by_role("button", name="Next").click()
-    # pin_code = input("ENTER TELEGRAM PIN CODE:\n")
-    # page.get_by_role("textbox").fill(pin_code)
-
-
-    context.storage_state(path=BROWSER_CONTEXT_PATH)
-    # ---------------------
-    context.close()
-    browser.close()
-
-
-
 def main(playwright: Playwright):
-    wait_timeout = 30
+    wait_timeout = 5
     
     bot = LeoBot()
     bot.login(playwright=playwright)
