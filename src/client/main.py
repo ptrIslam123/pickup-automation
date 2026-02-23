@@ -5,9 +5,6 @@ import sqlite3
 from fuzzywuzzy import fuzz
 from playwright.sync_api import Playwright, sync_playwright
 
-from profile_filter import AIProfileFilter
-from profile_parser import Profile
-from profile_db import ProfilesDB
 from leo_bot import LeoBot
 from ai import ask
 from global_config import *

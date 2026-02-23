@@ -1,17 +1,12 @@
 import os
 import logging
 
-ROOT_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/.."
-BROWSER_CONTEXT_PATH=f"{ROOT_PATH}/.local/browser_context"
-LOG_FILE_PATH=f"{ROOT_PATH}/log/log.txt"
-PROFILES_DB_PATH=f"{ROOT_PATH}/database/profiles.db"
+ROOT_PATH = f"{os.path.dirname(os.path.abspath(__file__))}/../.."
+BROWSER_CONTEXT_PATH="/home/islam/py/pickup-automation/.local/browser_context" # f"{ROOT_PATH}/.local/browser_context"
+LOG_FILE_PATH="/home/islam/py/pickup-automation/log/log.txt" #f"{ROOT_PATH}/log/log.txt"
 
 LIKE = "1" #"❤️"
 DISLIKE = "3" #"👎"
-
-QWEN_MODEL = "qwen3:4b"
-QWEN_HOST = "localhost"
-QWEN_PORT = "11434"
 
 logging.basicConfig(
     filename=LOG_FILE_PATH,
