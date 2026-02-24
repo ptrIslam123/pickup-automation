@@ -7,7 +7,7 @@ from playwright.sync_api import Playwright, sync_playwright
 
 from leo_bot import LeoBot
 from ai import ask
-from global_config import *
+from global_config import Config, LIKE
 
 def main(playwright: Playwright):
     wait_timeout = 5
@@ -29,7 +29,7 @@ def main(playwright: Playwright):
         #     continue
         
         if bot.is_match(last_text):
-            # parse
+            bot.enter("1")
             continue
         
         # if bot.is_profile_url(last_text):

@@ -4,7 +4,7 @@ import Levenshtein
 
 from bs4 import BeautifulSoup
 from playwright.sync_api import Playwright
-from global_config import BROWSER_CONTEXT_PATH, ROOT_PATH
+from global_config import config
 from ai import ask
 
 class LeoBot:
@@ -14,13 +14,84 @@ class LeoBot:
         self.__context = None
         self.__page = None
         
-    def __sigin(self):
-        browser = self.__playwright.chromium.launch(headless=False)
-        context = browser.new_context()
-        page = context.new_page()
-        page.goto("https://web.telegram.org/k/")
+    def login(self, playwright: Playwright):
+        """
+        Выполняет вход в Telegram Web и авторизацию в leomatchbot.
         
-        print("Ожидание загрузки Telegram Web...")
+        Args:
+            playwright: Экземпляр Playwright для управления браузером
+        """
+        self.__playwright = playwright
+        browser_context_path = config.get_browser_context_path()
+        
+        # Запускаем браузер (один раз для всего метода)
+        self.__browser = self.__playwright.chromium.launch(headless=False)
+        
+        if not os.path.exists(browser_context_path):
+            # Первый вход - требуется авторизация
+            self._first_time_login(browser_context_path)
+        else:
+            # Используем сохраненную сессию
+            self._restore_session(browser_context_path)
+        
+        """
+        Переходит к leomatchbot через поиск.
+        """
+        print("🔍 Поиск leomatchbot...")
+        
+        # Кликаем на поле поиска и вводим имя бота
+        self.__page.get_by_placeholder(" ").click()
+        self.__page.get_by_placeholder(" ").fill("@leomatchbot")
+        
+        # Ожидаем появления бота в результатах поиска
+        self.__page.wait_for_selector("text=leomatchbot", timeout=5000)
+        
+        # Переходим в чат с ботом
+        self.__page.locator("text=leomatchbot").first.click()
+        print("✅ Успешно перешли в чат с leomatchbot")
+
+    def _first_time_login(self, context_path: str):
+        """
+        Выполняет первый вход с сохранением сессии.
+        
+        Args:
+            context_path: Путь для сохранения контекста браузера
+        """
+        print("🔄 Первый запуск. Выполняется авторизация в Telegram Web...")
+        
+        # Создаем новый контекст
+        self.__context = self.__browser.new_context()
+        self.__page = self.__context.new_page()
+        self.__page.goto("https://web.telegram.org/k/")
+        
+        # Ждем ручной авторизации пользователя
+        self._wait_for_telegram_auth(self.__page)
+        
+        # Сохраняем состояние сессии
+        self.__context.storage_state(path=context_path)
+        print("✅ Сессия сохранена")
+
+    def _restore_session(self, context_path: str):
+        """
+        Восстанавливает сессию из сохраненного контекста.
+        
+        Args:
+            context_path: Путь к файлу с сохраненной сессией
+        """
+        print("🔄 Восстановление сохраненной сессии...")
+        self.__context = self.__browser.new_context(storage_state=context_path)
+        self.__page = self.__context.new_page()
+        self.__page.goto("https://web.telegram.org/k/")
+
+    def _wait_for_telegram_auth(self, page):
+        """
+        Ожидает ручной авторизации пользователя в Telegram Web.
+        
+        Args:
+            page: Страница браузера с открытым Telegram Web
+        """
+        print("⏳ Ожидание авторизации в Telegram Web...")
+        print("   Пожалуйста, войдите в свой аккаунт в открывшемся окне браузера")
         
         while True:
             try:
@@ -32,34 +103,6 @@ class LeoBot:
             except Exception as _:
                 print("Не загрузился еще!")
                 continue
-        
-        print("Интерфейс загружен, проверяем через поиск бота...")
-
-        local_dir = f"{ROOT_PATH}/.local/"
-        if not os.path.exists(local_dir):
-            os.makedirs(local_dir)
-        context.storage_state(path=BROWSER_CONTEXT_PATH)
-        # ---------------------
-        context.close()
-        browser.close()
-
-    
-    def login(self, playwright: Playwright):
-        self.__playwright = playwright
-        
-        if not os.path.exists(BROWSER_CONTEXT_PATH):
-            self.__sigin()
-        
-        self.__browser = self.__playwright.chromium.launch(headless=False)
-        self.__context = self.__browser.new_context(storage_state=BROWSER_CONTEXT_PATH)
-        self.__page = self.__context.new_page()
-        self.__page.goto("https://web.telegram.org/k/")
-
-        self.__page.get_by_placeholder(" ").click()
-        self.__page.get_by_placeholder(" ").fill("@leomatchbot")
-        
-        self.__page.wait_for_selector("text=leomatchbot", timeout=5000)
-        self.__page.locator("text=leomatchbot").first.click()
     
     def get_page(self):
         return self.__page
