@@ -6,3 +6,4 @@ venv/
 .local/
 log/
 qodana.yaml
+src/client_rust/target/

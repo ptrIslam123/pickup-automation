@@ -6,7 +6,6 @@ from fuzzywuzzy import fuzz
 from playwright.sync_api import Playwright, sync_playwright
 
 from leo_bot import LeoBot
-from ai import ask
 from global_config import Config, LIKE
 
 def main(playwright: Playwright):
@@ -46,6 +45,5 @@ def main(playwright: Playwright):
 
 with sync_playwright() as playwright:
     main(playwright)
-    #login(playwright)
 
 

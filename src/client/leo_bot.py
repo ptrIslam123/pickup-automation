@@ -5,7 +5,6 @@ import Levenshtein
 from bs4 import BeautifulSoup
 from playwright.sync_api import Playwright
 from global_config import config
-from ai import ask
 
 class LeoBot:
     def __init__(self):
