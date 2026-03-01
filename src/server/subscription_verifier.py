@@ -291,9 +291,9 @@ if __name__ == '__main__':
             
         elif cmd == 'run':
             # Запуск веб-сервера
-            app.run(host='0.0.0.0', port=5000, debug=True)
+            app.run(host='0.0.0.0', port=8000, debug=True)
         else:
             print("Неизвестная команда. Используйте: python server.py help")
     else:
         # По умолчанию запускаем сервер
-        app.run(host='0.0.0.0', port=5000, debug=True)
+        app.run(host='0.0.0.0', port=8000, debug=True)
