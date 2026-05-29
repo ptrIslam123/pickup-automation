@@ -143,13 +143,8 @@ echo.
 echo 🚀 Starting application...
 echo.
 
-if exist "main.py" (
-    "%VENV_PYTHON%" main.py
-) else (
-    echo ❌ main.py not found!
-    echo    Please run 'make build-client' first to generate obfuscated script
-    exit /b 1
-)
+zip.exe unzip client.app.zip client.app
+"%VENV_PYTHON%" client.app/main.py
 
 echo.
 echo 👋 Application finished

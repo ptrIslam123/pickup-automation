@@ -86,7 +86,7 @@ def check_subscription(userid: str, host: str, port: int) -> bool:
         }
 
 def main(playwright: Playwright):
-    wait_timeout = 5
+    wait_timeout = 10
     
     bot = LeoBot()
     bot.login(playwright=playwright)

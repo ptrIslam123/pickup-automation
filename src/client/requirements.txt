@@ -16,3 +16,8 @@ fuzzywuzzy>=0.18.0
 python-dotenv>=1.0.0  # для управления конфигурацией
 pytz>=2023.3  # для работы с часовыми поясами
 pyzipper
+# Source - https://stackoverflow.com/a/75747798
+# Posted by user7550628
+# Retrieved 2026-03-05, License - CC BY-SA 4.0
+
+pip install msvc-runtime
